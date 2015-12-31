@@ -1,0 +1,62 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<header>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Countdown to new year</title>
+	<script type="text/javascript">
+
+	function fileChanged() {
+		var videoFile = document.getElementById('fileItem').files[0];
+		var videoURL = URL.createObjectURL(videoFile);
+		document.getElementById("videoPlayer").src = videoURL;
+	}
+
+	function fireCountdown() {
+		document.body.style.backgroundColor = "black";
+		// time magic (careful about UTC)
+		var targetDay = document.getElementById("date").value;
+		var targetTime = document.getElementById("time").value;
+		var offset = document.getElementById("offset").value;
+		var targetDate = new Date(targetDay+"T"+targetTime);
+		var computedTimeout = computeStartTime(offset, targetDate);
+
+		setTimeout(function() {
+			document.getElementById("videoPlayer").play();
+			//document.getElementById("videoPlayer").requestFullScreen();
+		}, computedTimeout);
+
+
+		setTimeout(function() {
+			var secondVideoFile = document.getElementById("video2").files[0];
+			document.getElementById("videoPlayer").src = URL.createObjectURL(secondVideoFile);;
+			document.getElementById("videoPlayer").play();
+			//document.getElementById("videoPlayer").requestFullScreen();
+		}, targetDate.getTime() - Date.now());
+
+		alert("Video starts in " + (computedTimeout / 1000) + " seconds.");
+	}
+
+	function computeStartTime(offset, targetDate) {
+		var now = new Date();
+		var offsetInMS = 1000 * offset;
+		return (targetDate.getTime() - offsetInMS) - now.getTime();
+	}
+	</script>
+	<style type="text/css">
+	input {
+    	background-color: rgba(0, 0, 0, 0);
+	    border: none;
+	}
+	</style>
+</header>
+<body>
+	<input id="fileItem" type="file" accept="video/*" value="1" onchange="fileChanged()" />
+	<input id="video2" type="file" accept="video/*" value="2"/>
+	<input id="date" type="date"/>
+	<input id="time" type="time" />
+	<input id="offset" type="number" />
+	<input id="time" type="button" onclick="fireCountdown()" value="Go!"/>
+	
+	<video id="videoPlayer"></video>
+</body>
+</html>
